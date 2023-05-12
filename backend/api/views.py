@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
@@ -12,6 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
+from api.mixins import AddRemoveMethod
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.paginations import Paginate
 from api.permissions import IsAdminAuthorOrReadOnly, IsAdminOrReadOnly
@@ -61,7 +62,7 @@ class TagViewSet(ListRetrieveViewSet):
     serializer_class = TagSerializer
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
+class RecipeViewSet(AddRemoveMethod):
     pagination_class = Paginate
     permission_classes = (IsAdminAuthorOrReadOnly,)
     filter_class = RecipeFilter
@@ -102,60 +103,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post'],
         permission_classes=[IsAuthenticated],
     )
-    def favorite(self, request, pk=None):
-        data = {
-            'user': request.user.id,
-            'recipe': pk,
-        }
-        serializer = FavoriteCheckingSerializer(
-            data=data,
-            context={'request': request},
-        )
-        serializer.is_valid(raise_exception=True)
-        return self.add_object(FavoriteRecipe, request.user, pk)
+    def favorite(self, request, pk):
+        return self._add_method(
+            request=request, pk=pk, serializers=FavoriteCheckingSerializer)
 
     @favorite.mapping.delete
-    def del_favorite(self, request, pk=None):
-        data = {
-            'user': request.user.id,
-            'recipe': pk,
-        }
-        serializer = FavoriteCheckingSerializer(
-            data=data,
-            context={'request': request},
-        )
-        serializer.is_valid(raise_exception=True)
-        return self.delete_object(FavoriteRecipe, request.user, pk)
+    def del_favorite(self, request, pk):
+        return self._remove_method(
+            request=request, pk=pk, model=FavoriteRecipe)
 
     @action(
         detail=True,
         methods=['post'],
         permission_classes=[IsAuthenticated],
     )
-    def shopping_cart(self, request, pk=None):
-        data = {
-            'user': request.user.id,
-            'recipe': pk,
-        }
-        serializer = ShoppingListCheckingSerializer(
-            data=data,
-            context={'request': request},
-        )
-        serializer.is_valid(raise_exception=True)
-        return self.add_object(ShoppingCart, request.user, pk)
+    def shopping_cart(self, request, pk):
+        return self._add_method(
+            request=request, pk=pk, serializers=ShoppingListCheckingSerializer)
 
     @shopping_cart.mapping.delete
-    def remove_shopping_cart(self, request, pk=None):
-        data = {
-            'user': request.user.id,
-            'recipe': pk,
-        }
-        serializer = ShoppingListCheckingSerializer(
-            data=data,
-            context={'request': request},
-        )
-        serializer.is_valid(raise_exception=True)
-        return self.delete_object(ShoppingCart, request.user, pk)
+    def remove_shopping_cart(self, request, pk):
+        return self._remove_method(
+            request=request, pk=pk, model=ShoppingCart)
 
     @transaction.atomic()
     def add_object(self, model, user, pk):
@@ -185,7 +154,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
             .annotate(quantity=Sum('amount'))
         )
-        today = datetime.today()
+        today = timezone.now()
         shopping = (
             f'Список покупок {request.user.username}\n'
             f'Дата: {today:%Y-%m-%d}\n\n'

@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.db.models import F
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from api.mixins import GetIsSubscribedMixin, GetIngredientsMixin
 from recipes.models import (
     FavoriteRecipe,
     Ingredient,
@@ -17,14 +17,6 @@ from recipes.models import (
 from users.models import Follow
 
 User = get_user_model()
-
-
-class GetIsSubscribedMixin:
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.follower.filter(author=obj.id).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -77,16 +69,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class GetIngredientsMixin:
-    def get_ingredients(self, obj):
-        return obj.ingredients.values(
-            'id',
-            'name',
-            'measurement_unit',
-            amount=F('quantity_ingredients__amount'),
-        )
-
-
 class RecipeSerializer(GetIngredientsMixin, serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
@@ -113,7 +95,7 @@ class RecipeCreateSerializer(GetIngredientsMixin, serializers.ModelSerializer):
         read_only_fields = ('author',)
 
     def validate(self, data):
-        ingredients = self.initial_data['ingredients']
+        ingredients = self.initial_data['ingredients']  # Долго мучился, но так и не смог исправить тут, не понимаю как реализовать, всё валиться начинает(
         ingredient_list = []
         if not ingredients:
             raise serializers.ValidationError(
