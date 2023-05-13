@@ -5,7 +5,7 @@ from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from api.mixins import GetIsSubscribedMixin, GetIngredientsMixin
+from api.mixins import GetIngredientsMixin, GetIsSubscribedMixin
 from recipes.models import (
     FavoriteRecipe,
     Ingredient,
@@ -81,12 +81,17 @@ class RecipeSerializer(GetIngredientsMixin, serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RecipeIngredientsWriteSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+
 class RecipeCreateSerializer(GetIngredientsMixin, serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Tag.objects.all(),
     )
-    ingredients = serializers.SerializerMethodField()
+    ingredients = RecipeIngredientsWriteSerializer(many=True)
     image = Base64ImageField()
 
     class Meta:
@@ -94,8 +99,14 @@ class RecipeCreateSerializer(GetIngredientsMixin, serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('author',)
 
+    def to_representation(self, instance):
+        return RecipeSerializer(
+            instance,
+            context=self.context,
+        ).data
+
     def validate(self, data):
-        ingredients = self.initial_data['ingredients']  # Долго мучился, но так и не смог исправить тут, не понимаю как реализовать, всё валиться начинает(
+        ingredients = data.get('ingredients')
         ingredient_list = []
         if not ingredients:
             raise serializers.ValidationError(
@@ -110,12 +121,11 @@ class RecipeCreateSerializer(GetIngredientsMixin, serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Этот ингредиент уже есть',
                 )
-            if int(item.get('amount')) < 1:
+            if int(item['amount']) < 1:
                 raise serializers.ValidationError(
                     'Минимум - 1',
                 )
             ingredient_list.append(ingredient)
-        data['ingredients'] = ingredients
         return data
 
     def validate_cooking_time(self, time):

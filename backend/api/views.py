@@ -1,4 +1,3 @@
-from django.utils import timezone
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
@@ -6,14 +5,15 @@ from django.db import transaction
 from django.db.models import BooleanField, Exists, OuterRef, Sum, Value
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from djoser.views import UserViewSet
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from api.mixins import AddRemoveMethod
 from api.filters import IngredientSearchFilter, RecipeFilter
+from api.mixins import AddRemoveMethod
 from api.paginations import Paginate
 from api.permissions import IsAdminAuthorOrReadOnly, IsAdminOrReadOnly
 from api.serializers import (
@@ -105,12 +105,18 @@ class RecipeViewSet(AddRemoveMethod):
     )
     def favorite(self, request, pk):
         return self._add_method(
-            request=request, pk=pk, serializers=FavoriteCheckingSerializer)
+            request=request,
+            pk=pk,
+            serializers=FavoriteCheckingSerializer,
+        )
 
     @favorite.mapping.delete
     def del_favorite(self, request, pk):
         return self._remove_method(
-            request=request, pk=pk, model=FavoriteRecipe)
+            request=request,
+            pk=pk,
+            model=FavoriteRecipe,
+        )
 
     @action(
         detail=True,
@@ -119,12 +125,14 @@ class RecipeViewSet(AddRemoveMethod):
     )
     def shopping_cart(self, request, pk):
         return self._add_method(
-            request=request, pk=pk, serializers=ShoppingListCheckingSerializer)
+            request=request,
+            pk=pk,
+            serializers=ShoppingListCheckingSerializer,
+        )
 
     @shopping_cart.mapping.delete
     def remove_shopping_cart(self, request, pk):
-        return self._remove_method(
-            request=request, pk=pk, model=ShoppingCart)
+        return self._remove_method(request=request, pk=pk, model=ShoppingCart)
 
     @transaction.atomic()
     def add_object(self, model, user, pk):
