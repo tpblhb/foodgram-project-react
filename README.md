@@ -15,7 +15,7 @@ DB_ENGINE=django.db.backends.postgresql
 DB_HOST=db
 DB_NAME=postgres
 DB_PORT=5432
-DEBUG=True
+DEBUG=False
 POSTGRES_PASSWORD=postgres
 POSTGRES_USER=postgres
 SECRET_KEY='p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
