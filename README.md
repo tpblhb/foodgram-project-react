@@ -12,12 +12,12 @@ Python, Django, Docker
 
 ```bash
 DB_ENGINE=django.db.backends.postgresql
-DB_HOST=127.0.0.1
-DB_NAME=foodgramdb
+DB_HOST=db
+DB_NAME=postgres
 DB_PORT=5432
 DEBUG=False
-POSTGRES_PASSWORD=shish123
-POSTGRES_USER=shish
+POSTGRES_PASSWORD=postgres
+POSTGRES_USER=postgres
 SECRET_KEY='p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 ```
 
