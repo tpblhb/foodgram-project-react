@@ -1,6 +1,13 @@
 # Foodgram-project-react
 
+![foodgram-project-react workflow Status](https://github.com/tpblhb/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=main&event=push)
+
 ## Описание
+
+tpblhb.ddns.net
+
+Логин: shishka-2296@yandex.ru
+Пароль: shishadmin123
 
 Это дипломный проект - сайт Foodgram, «Продуктовый помощник». На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
