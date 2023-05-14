@@ -12,18 +12,18 @@ Python, Django, Docker
 
 ```bash
 DB_ENGINE=django.db.backends.postgresql
-DB_HOST=db
-DB_NAME=postgres
+DB_HOST=127.0.0.1
+DB_NAME=foodgramdb
 DB_PORT=5432
 DEBUG=False
-POSTGRES_PASSWORD=postgres
-POSTGRES_USER=postgres
+POSTGRES_PASSWORD=shish123
+POSTGRES_USER=shish
 SECRET_KEY='p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 ```
 
 ## Запуск
 
-Пройтись по разделам для сборки docker-compose.
+Пройтись по разделам для сборки docker-compose
 
 ```bash
 cd frontend/
