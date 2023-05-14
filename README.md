@@ -1,6 +1,6 @@
 # Foodgram-project-react
 
-![foodgram-project-react workflow Status](https://github.com/tpblhb/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=main&event=push)
+![foodgram-project-react workflow Status](https://github.com/tpblhb/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 ## Описание
 
