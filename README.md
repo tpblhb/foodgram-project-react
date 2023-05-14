@@ -23,7 +23,7 @@ SECRET_KEY='p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 
 ## Запуск
 
-Пройтись по разделам для сборки docker-compose.
+Пройтись по разделам для сборки docker-compose
 
 ```bash
 cd frontend/
